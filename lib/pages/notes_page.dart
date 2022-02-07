@@ -22,7 +22,7 @@ class _NotesPageState extends State<NotesPage> {
   List<Note> listofNotes = [];
   TextEditingController noteController = TextEditingController();
 
-  void _storeNotes() async {
+  void _createNotes() async {
     String text = noteController.text.toString().trim();
     listofNotes.add(Note(
         date: DateTime(
@@ -86,7 +86,7 @@ class _NotesPageState extends State<NotesPage> {
                   )),
               TextButton(
                   onPressed: () {
-                    _storeNotes();
+                    _createNotes();
                     Navigator.pop(context);
                     noteController.clear();
                     setState(() {});

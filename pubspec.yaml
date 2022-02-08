@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.13
   flutter_slidable: ^1.2.0
+  easy_localization: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -30,8 +31,8 @@ flutter:
   uses-material-design: true
 
 
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/translations/
 
   # fonts:
   #   - family: Schyler

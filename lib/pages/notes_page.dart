@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,7 +12,6 @@ class NotesPage extends StatefulWidget {
   static const String id = "notes_page";
 
   const NotesPage({Key? key}) : super(key: key);
-
   @override
   _NotesPageState createState() => _NotesPageState();
 }
@@ -283,86 +283,8 @@ class _NotesPageState extends State<NotesPage> {
     return Slidable(
       enabled: enabled,
 
-      // #edit_note
-      startActionPane: ActionPane(
-        extentRatio: 0.3,
-        motion: const ScrollMotion(),
-        children: [
-          SlidableAction(
-              backgroundColor: Colors.blue,
-              label: "edit".tr(),
-              onPressed: (BuildContext context) {
-                showGeneralDialog(
-                    barrierDismissible: true,
-                    barrierLabel: '',
-                    context: context,
-                    transitionBuilder: (context, a1, a2, widget) {
-                      return Transform.scale(
-                        scale: a1.value,
-                        child: Opacity(
-                          opacity: a1.value,
-                          child: AlertDialog(
-                            contentPadding: const EdgeInsets.fromLTRB(
-                                24.0, 10.0, 24.0, 10.0),
-                            title: Text(
-                              "edit note".tr(),
-                            ),
-                            content: TextField(
-                              maxLines: 10,
-                              controller: noteController
-                                ..text = listofNotes[index].notes!,
-                              decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.zero,
-                                  hintText: "Enter your note!",
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none)),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "cancel".tr(),
-                                    style: const TextStyle(
-                                        color: Colors.blue, fontSize: 16),
-                                  )),
-                              TextButton(
-                                  onPressed: () {
-                                    listofNotes[index].notes =
-                                        noteController.text;
-                                    listofNotes[index].date =
-                                        DateTime.now().toString();
-                                    _storeNotes();
-                                    loadEverything();
-                                    Navigator.pop(context);
-                                    noteController.clear();
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    "save".tr(),
-                                    style: const TextStyle(
-                                        color: Colors.blue, fontSize: 16),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    transitionDuration: const Duration(milliseconds: 200),
-                    pageBuilder: (BuildContext context,
-                        Animation<double> animation,
-                        Animation<double> secondaryAnimation) {
-                      return const SizedBox();
-                    });
-              },
-              icon: Icons.edit),
-        ],
-      ),
-
       // #delete_note
-      endActionPane: ActionPane(
+      startActionPane: ActionPane(
         extentRatio: 0.3,
         motion: const ScrollMotion(),
         children: [
@@ -388,13 +310,22 @@ class _NotesPageState extends State<NotesPage> {
             border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
         child: WillPopScope(
           onWillPop: () async {
-            setState(() {
-              enabled = true;
-              isLongPressed = false;
-              selected=0;
-            });
-            loadEverything();
-            return false;
+            if(isLongPressed){
+              setState(() {
+                enabled = true;
+                isLongPressed = false;
+                selected=0;
+              });
+              loadEverything();
+              return false;
+            } else{
+              if(Platform.isAndroid){
+                SystemNavigator.pop();
+              } else{
+                exit(0);
+              }
+              return false;
+            }
           },
           child: GestureDetector(
             onTap: () {
@@ -404,6 +335,79 @@ class _NotesPageState extends State<NotesPage> {
                   listofNotes[index].isSelected ? selected++ : selected--;
                   listofNotestoDelete =
                       listofNotes.where((element) => element.isSelected).toList();
+                } else{
+
+                  // #edit_note
+                  showGeneralDialog(
+                      barrierDismissible: true,
+                      barrierLabel: '',
+                      context: context,
+                      transitionBuilder: (context, a1, a2, widget) {
+                        return Transform.scale(
+                          scale: a1.value,
+                          child: Opacity(
+                            opacity: a1.value,
+                            child: AlertDialog(
+                              backgroundColor:
+                              isLight ? Colors.grey.shade100 : Colors.grey.shade900,
+                              contentPadding: const EdgeInsets.fromLTRB(
+                                  24.0, 10.0, 24.0, 10.0),
+                              title: Text(
+                                "edit note".tr(), style: TextStyle(
+                                color: isLight ? Colors.black : Colors.grey.shade300,
+                              )
+                              ),
+                              content: TextField(
+                                maxLines: 10,
+                                style: TextStyle(
+                                    color: isLight ? Colors.black : Colors.grey.shade300),
+                                controller: noteController
+                                  ..text = listofNotes[index].notes!,
+                                decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    hintText: "Enter your note!",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none)),
+                              ),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      "cancel".tr(),
+                                      style: const TextStyle(
+                                          color: Colors.blue, fontSize: 16),
+                                    )),
+                                TextButton(
+                                    onPressed: () {
+                                      listofNotes[index].notes =
+                                          noteController.text;
+                                      listofNotes[index].date =
+                                          DateTime.now().toString();
+                                      _storeNotes();
+                                      loadEverything();
+                                      Navigator.pop(context);
+                                      noteController.clear();
+                                      setState(() {});
+                                    },
+                                    child: Text(
+                                      "save".tr(),
+                                      style: const TextStyle(
+                                          color: Colors.blue, fontSize: 16),
+                                    )),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      transitionDuration: const Duration(milliseconds: 200),
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return const SizedBox();
+                      });
                 }
               });
             },

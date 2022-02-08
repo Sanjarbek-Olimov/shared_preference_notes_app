@@ -16,8 +16,7 @@ class Note {
       };
 
   static String encode(List<Note> notes) => json.encode(
-        notes.map<Map<String, dynamic>>((note) => note.toJson()).toList(),
-      );
+        notes.map<Map<String, dynamic>>((note) => note.toJson()).toList());
 
   static List<Note> decode(String notes) =>
       json.decode(notes).map<Note>((item) => Note.fromJson(item)).toList();

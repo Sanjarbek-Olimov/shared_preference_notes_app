@@ -25,20 +25,16 @@ class _NotesPageState extends State<NotesPage> {
   void _createNotes() async {
     String text = noteController.text.toString().trim();
     listofNotes.add(Note(
-        date: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-          DateTime.now().hour,
-          DateTime.now().minute,
-        ).toString().substring(0, 16),
+        date: DateTime.now().toString(),
         notes: text));
+    listofNotes.sort((a, b) => b.date!.compareTo(a.date!));
     loadList();
   }
   Future<void> loadList() async {
     String notes = Note.encode(listofNotes);
     Prefs.storeNotes(notes);
     listofNotes = Note.decode(await Prefs.loadNotes() as String);
+    listofNotes.sort((a, b) => b.date!.compareTo(a.date!));
     setState(() {
       isLoading = false;
     });
@@ -68,7 +64,6 @@ class _NotesPageState extends State<NotesPage> {
             ),
             content: TextField(
               controller: noteController,
-              maxLines: 4,
               decoration: const InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   hintText: "Enter your note!",
@@ -158,7 +153,6 @@ class _NotesPageState extends State<NotesPage> {
                     ),
                     content: TextField(
                       controller: noteController..text = listofNotes[index].notes!,
-                      maxLines: 4,
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.zero,
                           hintText: "Enter your note!",
@@ -177,6 +171,7 @@ class _NotesPageState extends State<NotesPage> {
                       TextButton(
                           onPressed: () {
                             listofNotes[index].notes = noteController.text;
+                            listofNotes[index].date = DateTime.now().toString();
                             loadList();
                             Navigator.pop(context);
                             noteController.clear();
@@ -211,7 +206,7 @@ class _NotesPageState extends State<NotesPage> {
                 const SizedBox(
                   width: 10,
                 ),
-                Text(listofNotes[index].date!),
+                Text(listofNotes[index].date!.substring(0,16)),
               ],
             ),
             Row(

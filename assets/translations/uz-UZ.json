@@ -8,5 +8,7 @@
   "delete": "O'chirish",
   "edit": "Tahrirlash",
   "edit note": "Eslatmani tahrirlash",
-  "selected": "{} ta tanlandi"
+  "selected": "{} ta tanlandi",
+  "confirm delete":"{} ta fayl o'chirilsinmi?",
+  "cancelDelete": "Bekor qilish"
 }

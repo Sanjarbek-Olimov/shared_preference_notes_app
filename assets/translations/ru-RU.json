@@ -8,5 +8,7 @@
   "delete": "Удалить",
   "edit": "Изменить",
   "edit note": "Изменить заметку",
-  "selected": "Выбрано: {}"
+  "selected": "Выбрано: {}",
+  "confirm delete":"Удалить {} файл(ы)?",
+  "cancelDelete": "Отменить"
 }

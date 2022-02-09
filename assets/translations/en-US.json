@@ -8,5 +8,7 @@
   "delete": "Delete",
   "edit": "Edit",
   "edit note": "Edit Note",
-  "selected": "{} selected"
+  "selected": "{} selected",
+  "confirm delete":"Delete {} file(s)?",
+  "cancelDelete": "Cancel"
 }
